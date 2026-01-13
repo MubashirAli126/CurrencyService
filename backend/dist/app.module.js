@@ -20,7 +20,8 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                envFilePath: '.env',
+                envFilePath: process.env.NODE_ENV === 'production' ? undefined : '.env',
+                ignoreEnvFile: process.env.NODE_ENV === 'production',
             }),
             currency_module_1.CurrencyModule,
         ],

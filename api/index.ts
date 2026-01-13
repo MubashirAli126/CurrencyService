@@ -11,25 +11,38 @@ async function createApp(): Promise<express.Application> {
     return cachedApp;
   }
 
-  const expressApp = express();
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
+  try {
+    const expressApp = express();
+    const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
 
-  // Don't set global prefix - Vercel routes already handle /api prefix
+    // Don't set global prefix - Vercel routes already handle /api prefix
 
-  // Enable CORS for all origins in production
-  app.enableCors({
-    origin: true, // Allow all origins in production
-    credentials: true,
-  });
+    // Enable CORS for all origins in production
+    app.enableCors({
+      origin: true, // Allow all origins in production
+      credentials: true,
+    });
 
-  await app.init();
-  cachedApp = expressApp;
-  return expressApp;
+    await app.init();
+    cachedApp = expressApp;
+    return expressApp;
+  } catch (error) {
+    console.error('Failed to create NestJS app:', error);
+    throw error;
+  }
 }
 
 const handler: Handler = async (req, res) => {
-  const app = await createApp();
-  return app(req, res);
+  try {
+    const app = await createApp();
+    return app(req, res);
+  } catch (error) {
+    console.error('Handler error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
 };
 
 export default handler;
