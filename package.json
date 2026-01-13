@@ -1,0 +1,9 @@
+{
+  "name": "currency-service",
+  "version": "1.0.0",
+  "description": "Currency Converter Application",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build"
+  }
+}
